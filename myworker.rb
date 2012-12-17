@@ -17,7 +17,7 @@ class MyWorker
       10.times { print '.'; sleep 1 }
     rescue Resque::TermException
       puts 'O_o someone want to kill me :(...'
-      5.times { print '.'; sleep 1 }
+      15.times { print '.'; sleep 1 }
     end
   end
 end
