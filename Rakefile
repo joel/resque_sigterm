@@ -2,7 +2,7 @@ require 'rake'
 require 'resque/tasks'
 
 task 'resque:setup' do
-  require "#{File.dirname(__FILE__)}/myworker.rb"
+  require File.expand_path('myworker.rb', __FILE__)
 end
 
 
