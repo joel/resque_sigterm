@@ -13,7 +13,7 @@ class MyWorker
   
   @queue = :worker
   
-  THRESHOLD = 4
+  THRESHOLD = 3
   
   def perform
     
@@ -26,8 +26,7 @@ class MyWorker
       puts 'Yeah i\'m alive!!!'
       name_of_person = options['person'] || 'John Doe' 
       puts "#{name_of_person} you're my friend!"
-      
-      
+        
       total = (options['length'] || 8).to_i
       num = 0
       while num < total
@@ -37,7 +36,6 @@ class MyWorker
         num += 1
       end
          
-      # 8.times { print '.'; sleep 1 }
       puts 'bye bye...'
       
     rescue Resque::TermException
@@ -80,9 +78,7 @@ class MyWorker
     
   def cache_key options
     @cache_key ||= begin
-      _key = self.class.name.underscore << '_' << options.collect { |key, value| "#{key.to_s.underscore}_#{value.to_s.underscore}" }.join('_')
-      # puts "cache_key => #{_key}"
-      _key
+      self.class.name.underscore << '_' << options.collect { |key, value| "#{key.to_s.underscore}_#{value.to_s.underscore}" }.join('_')
     end
   end
   

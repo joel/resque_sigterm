@@ -10,41 +10,79 @@ foreman start
 Launch worker 
 
 ```
-env VVERBOSE=1 INTERVAL=1 PIDFILE=resque.pid QUEUE=* TERM_CHILD=1 RESQUE_TERM_TIMEOUT=5 bundle exec rake resque:work
+./start_resque_worker.sh
 ```
 
 Put en queue job
 
 ```
-ruby start.rb 
+./start.rb 
 ```
 
 And try QUIT or TERM
 
 ```
-3       QUIT (quit)
-15      TERM (software termination signal)
+./watch_and_kill.rb
 ```
 
-QUIT (quit)
 ```
-ruby start.rb && sleep 2 && kill -3 `cat resque.pid`
+** Waiting for *
+** Checking worker
+** Found job on worker
+** got: (Job{worker} | MyWorker | ["5345180684650cc199e086a405b7f455", {"person"=>"Judas Iscariote", "length"=>5}])
+** Forked 82305 at 1355854132
+** Processing worker since 1355854132
+
+Time to live => 5 secondes
+Yeah i'm alive!!!
+Judas Iscariote you're my friend!
+....** Exiting...
+** Sending TERM signal to child 82305
+O_o someone want to kill me :(...
+..You've 1 frags!
+I'm Jesus of Nazareth i can't died!
+** done: (Job{worker} | MyWorker | ["5345180684650cc199e086a405b7f455", {"person"=>"Judas Iscariote", "length"=>5}])
 ```
 
-TERM (software termination signal)
+Relaunch worker
+
 ```
-ruby start.rb && sleep 2 && kill -15 `cat resque.pid`
+./start_resque_worker.sh
 ```
 
 Output
 
 ```
-** 36771: got: (Job{worker} | MyWorker | [])
-** 36771: resque-1.23.0: Forked 36781 at 1355762515
-** 36781: resque-1.23.0: Processing worker since 1355762515
+** Checking worker
+** Found job on worker
+** got: (Job{worker} | MyWorker | ["4b27fcace7348947810072fe955a8fc3", {"person"=>"Judas Iscariote", "length"=>5}])
+** Processing worker since 1355854315
+** Forked 82453 at 1355854315
+Time to live => 5 secondes
+RESURRECTION! Thanks Dad (You're died 1 times)
 Yeah i'm alive!!!
-..** 36771: Exiting...
-** 36771: Sending TERM signal to child 36781
+Judas Iscariote you're my friend!
+.....bye bye...
+** done: (Job{worker} | MyWorker | ["4b27fcace7348947810072fe955a8fc3", {"person"=>"Judas Iscariote", "length"=>5}])
+** Checking worker
+
+```
+
+And after 3 times
+
+```
+** Checking worker
+** Found job on worker
+** got: (Job{worker} | MyWorker | ["95daeff4670eac3da3f66b6ba97ff927", {"person"=>"Judas Iscariote", "length"=>5}])
+** Forked 82670 at 1355854502
+** Processing worker since 1355854502
+Time to live => 5 secondes
+RESURRECTION! Thanks Dad (You're died 3 times)
+Yeah i'm alive!!!
+Judas Iscariote you're my friend!
+....** Exiting...
+** Sending TERM signal to child 82670
 O_o someone want to kill me :(...
-......** 36771: Sending KILL signal to child 36781
+..Omar m'a tuer...
+** done: (Job{worker} | MyWorker | ["95daeff4670eac3da3f66b6ba97ff927", {"person"=>"Judas Iscariote", "length"=>5}])
 ```
