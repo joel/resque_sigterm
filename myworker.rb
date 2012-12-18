@@ -81,7 +81,7 @@ class MyWorker
   def cache_key options
     @cache_key ||= begin
       _key = self.class.name.underscore << '_' << options.collect { |key, value| "#{key.to_s.underscore}_#{value.to_s.underscore}" }.join('_')
-      puts "cache_key => #{_key}"
+      # puts "cache_key => #{_key}"
       _key
     end
   end
