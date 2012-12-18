@@ -36,6 +36,7 @@ begin
     puts "Status num => #{status.num}" #=> 5
     puts "Status total => #{status.total}" # => 100
     puts "Status options => #{status.options}" # => 100
+    puts "Status status_ids => #{Resque::Plugins::Status::Hash.status_ids}"
     
     puts "killable? #{status.killable?}"
 
@@ -55,6 +56,7 @@ begin
       puts "worker.worker_pids => #{worker.worker_pids}"
       
       worker_id = worker.to_s.split(':')[1].to_i
+      puts "worker_id => #{worker_id}"
       
       # puts "worker_id => #{worker_id}"
       # 
@@ -71,6 +73,9 @@ begin
       puts "_worker.worker_pids => #{_worker.worker_pids}"
       
       sleep 1
+      
+      puts "Process.kill 'TERM', #{worker.pid}"
+      Process.kill 'TERM', worker.pid
       
       # Process.kill 'KILL', worker_id
       # Process.kill 'TERM', worker_id
