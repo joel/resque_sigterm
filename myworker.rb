@@ -6,69 +6,76 @@ require 'bundler/setup' if File.exists?(ENV['BUNDLE_GEMFILE'])
 require 'resque'
 require 'uri'
 require 'resque/errors'
+require 'resque/status'
 
 class MyWorker
+  include Resque::Plugins::Status
+  
   @queue = :worker
-
-  class << self
+  
+  THRESHOLD = 4
+  
+  def perform
     
-    def perform *args
-      begin
-        puts 'RESURRECTION! Thanks Dad' if have_already_received_sigterm? *args
-        puts 'Yeah i\'m alive!!!'
-        puts "#{args.first} you're my friend!"
-        10.times { print '.'; sleep 1 }
+    begin
+      
+      puts "RESURRECTION! Thanks Dad (You're died #{nb_of_restart(options)} times)" if nb_of_restart(options) > 0
+      
+      puts 'Yeah i\'m alive!!!'
+      name_of_person = options['person'] || 'John Doe' 
+      puts "#{name_of_person} you're my friend!"
+      10.times { print '.'; sleep 1 }
         
-      rescue Resque::TermException
-        puts 'O_o someone want to kill me :(...'
-        2.times { print '.'; sleep 1 }
+    rescue Resque::TermException
+      puts 'O_o someone want to kill me :(...'
+      2.times { print '.'; sleep 1 }
         
-        count = mark_as_term *args
-        puts "You've #{count} frags!"
+      if can_restart? options
+        puts "You've #{nb_of_restart(options)} frags!"
+        puts 'I\'m Jesus of Nazareth i can\'t died!'
         
-        if count > 3
-          clean! *args
-          puts 'Omar m\'a tuer...'
-        else
-          puts 'I\'m Jesus of Nazareth i can\'t died!'
-          Resque.enqueue self, *args
-        end
+        restart! options
+      else
+        clean! options
+        puts 'Omar m\'a tuer...'
       end
     end
     
-    protected 
+  end # perform
     
-    def threshold?
-      # 
-    end
-    
-    def have_already_received_sigterm? *args
-      Resque.redis.exists cache_key(*args)
-    end
-    
-    def clean! *args
-      Resque.redis.del cache_key(*args)
-    end
-    
-    def mark_as_term *args
-      Resque.redis.incr cache_key(*args)
-    end
-    
-    private
-    
-    def cache_key *args
-      @cache_key = begin
-        _key = "#{self.class.name.underscore}#{args.map(&:underscore).join('_')}"
-        puts _key
-        _key
-      end
-    end
-    
+  protected 
+  
+  def nb_of_restart options
+    Resque.redis.get(cache_key(options)).to_i || 0
   end
+
+  def restart! options
+    MyWorker.create options
+  end
+  
+  def clean! options
+    Resque.redis.del cache_key(options)
+  end
+    
+  def can_restart? options
+    Resque.redis.incr(cache_key(options)) <= THRESHOLD
+  end
+    
+  private
+    
+  def cache_key options
+    @cache_key ||= begin
+      _key = self.class.name.underscore << '_' << options.collect { |key, value| "#{key.underscore}_#{value.underscore}" }.join('_')
+      puts "cache_key => #{_key}"
+      _key
+    end
+  end
+  
 end
 
 begin
   uri = URI.parse 'redis://localhost:6379'
   _redis = Redis.new host: uri.host, port: uri.port
   Resque.redis = Redis::Namespace.new :resque, redis: _redis
+  Resque::Plugins::Status::Hash.expire_in = (24 * 60 * 60) # 24hrs in seconds
 end
