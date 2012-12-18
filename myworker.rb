@@ -19,14 +19,29 @@ class MyWorker
     
     begin
       
+      puts "Time to live => #{options['length']} secondes"
+      
       puts "RESURRECTION! Thanks Dad (You're died #{nb_of_restart(options)} times)" if nb_of_restart(options) > 0
       
       puts 'Yeah i\'m alive!!!'
       name_of_person = options['person'] || 'John Doe' 
       puts "#{name_of_person} you're my friend!"
-      10.times { print '.'; sleep 1 }
-        
+      
+      
+      total = (options['length'] || 8).to_i
+      num = 0
+      while num < total
+        at(num, total, "At #{num} of #{total}")
+        print '.'
+        sleep(1)
+        num += 1
+      end
+         
+      # 8.times { print '.'; sleep 1 }
+      puts 'bye bye...'
+      
     rescue Resque::TermException
+      
       puts 'O_o someone want to kill me :(...'
       2.times { print '.'; sleep 1 }
         
@@ -65,7 +80,7 @@ class MyWorker
     
   def cache_key options
     @cache_key ||= begin
-      _key = self.class.name.underscore << '_' << options.collect { |key, value| "#{key.underscore}_#{value.underscore}" }.join('_')
+      _key = self.class.name.underscore << '_' << options.collect { |key, value| "#{key.to_s.underscore}_#{value.to_s.underscore}" }.join('_')
       puts "cache_key => #{_key}"
       _key
     end
