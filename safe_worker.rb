@@ -2,8 +2,6 @@ require 'rubygems'
 File.expand_path('Gemfile', __FILE__)
 require 'bundler/setup'
 
-require 'resque'
-
 class SafeWorker
   
   autoload :Resque, './safe_mode'
