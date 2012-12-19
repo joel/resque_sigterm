@@ -6,7 +6,7 @@ module Resque
   class Worker
     def reserve
       raise 'monkey patch is obsolete please update me' if Resque::VERSION != '1.23.0'
-      puts "Called on monkey patch !"
+      puts "WARNING Called method Resque::Worker.reserve on monkey patch !"
       queues.each do |queue|
         log! "Checking fucking queue #{queue}"
         if job = Resque.reserve(queue)
