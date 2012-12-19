@@ -1,4 +1,5 @@
 require 'rake'
+require File.expand_path('../monkey_patch_worker.rb', __FILE__)
 require 'resque/tasks'
 
 task 'resque:setup' do
