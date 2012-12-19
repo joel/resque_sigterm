@@ -2,7 +2,7 @@ require 'rake'
 require 'resque/tasks'
 
 task 'resque:setup' do
-  Dir[ File.expand_path('../*.rb', __FILE__) ].each { |f| require f }
+  require File.expand_path('../safe_worker.rb', __FILE__)
 end
 
 
