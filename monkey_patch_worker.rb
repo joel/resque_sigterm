@@ -1,9 +1,11 @@
-require 'resque'
+require 'resque/helpers'
 require 'resque/worker'
+require 'resque/version'
 
 module Resque
   class Worker
     def reserve
+      raise 'monkey patch is obsolete please update me' if Resque::VERSION != '1.23.0'
       puts "Called on monkey patch !"
       queues.each do |queue|
         log! "Checking fucking queue #{queue}"
